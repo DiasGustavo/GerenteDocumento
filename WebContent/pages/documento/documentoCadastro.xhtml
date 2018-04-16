@@ -144,6 +144,8 @@
 								itemLabel="Fundação Cultural" />
 							<f:selectItem itemValue="Conselho.tutelar.norte"
 								itemLabel="Conselho Tutelar Norte" />
+							<f:selectItem itemValue="Conselho.tutelar.sul"
+								itemLabel="Conselho Tutelar Sul" />
 							<f:validateBean />
 						</p:selectOneMenu>
 
@@ -260,7 +262,14 @@
 								update="@all"
 								rendered="#{documentoBean.acao == 'editar' and documentoBean.arquivoVisualizar != null}" />
 						</h:panelGrid>
-
+						<p:spacer />
+						<p:dataList id="listQuadro" value="#{documentoBean.listaEmpenhos}" var="notas"
+							 type="ordered">
+							<f:facet name="header">
+            					Notas de Empenho
+        					</f:facet>					
+								#{notas.descricao}: #{notas.numero}
+						</p:dataList>
 					</h:panelGrid>
 				</p:fieldset>
 			</h:panelGrid>

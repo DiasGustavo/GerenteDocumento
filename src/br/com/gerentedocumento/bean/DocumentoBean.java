@@ -16,11 +16,13 @@ import br.com.gerentedocumento.dao.CadastraDocumentoDAO;
 import br.com.gerentedocumento.dao.DocumentoDAO;
 import br.com.gerentedocumento.dao.EmpresaDAO;
 import br.com.gerentedocumento.dao.FuncionarioDAO;
+import br.com.gerentedocumento.dao.NotaEmpenhoDAO;
 import br.com.gerentedocumento.dao.OrgaoDAO;
 import br.com.gerentedocumento.domain.CadastraDocumento;
 import br.com.gerentedocumento.domain.Documento;
 import br.com.gerentedocumento.domain.Empresa;
 import br.com.gerentedocumento.domain.Funcionario;
+import br.com.gerentedocumento.domain.NotaEmpenho;
 import br.com.gerentedocumento.domain.Orgao;
 import br.com.gerentedocumento.util.DownloadArquivoUtil;
 import br.com.gerentedocumento.util.FacesUtil;
@@ -37,6 +39,7 @@ public class DocumentoBean {
 	private List<Documento> listaDocumentosFiltrados;
 	private List<Funcionario> listaFuncionarios;
 	private List<Empresa> listaEmpresas;
+	private List<NotaEmpenho> listaEmpenhos;
 
 	@ManagedProperty(value = "#{autenticacaoBean}")
 	private AutenticacaoBean autenticacaoBean;
@@ -98,6 +101,14 @@ public class DocumentoBean {
 		this.listaEmpresas = listaEmpresas;
 	}
 
+	public List<NotaEmpenho> getListaEmpenhos() {
+		return listaEmpenhos;
+	}
+
+	public void setListaEmpenhos(List<NotaEmpenho> listaEmpenhos) {
+		this.listaEmpenhos = listaEmpenhos;
+	}
+
 	public AutenticacaoBean getAutenticacaoBean() {
 		return autenticacaoBean;
 	}
@@ -145,12 +156,13 @@ public class DocumentoBean {
 	public void salvar() {
 		try {
 			DocumentoDAO ddao = new DocumentoDAO();
+			
 			if (!(arquivoUpload.getFileName().isEmpty())) {
 				upload();
 				ddao.salvar(docCadastro);
-
+				
 				// captura as informações do documento cadastrado
-				Documento doc = ddao.buscarPorProcessoSecretaria(docCadastro.getProcesso(),
+				Documento doc = ddao.buscarPorProcessoSecretaria(docCadastro.getId(),docCadastro.getProcesso(),
 						docCadastro.getSecretaria());
 				CadastraDocumento cadastra = new CadastraDocumento();
 				cadastra.setCodDocumento(doc.getId());
@@ -168,7 +180,7 @@ public class DocumentoBean {
 				ddao.salvar(docCadastro);
 
 				// captura as informações do documento cadastrado
-				Documento doc = ddao.buscarPorProcessoSecretaria(docCadastro.getProcesso(),
+				Documento doc = ddao.buscarPorProcessoSecretaria(docCadastro.getId(), docCadastro.getProcesso(),
 						docCadastro.getSecretaria());
 				CadastraDocumento cadastra = new CadastraDocumento();
 				cadastra.setCodDocumento(doc.getId());
@@ -191,14 +203,25 @@ public class DocumentoBean {
 	public void listar() {
 		try {
 			DocumentoDAO ddao = new DocumentoDAO();
+			
 			if (autenticacaoBean.getFuncionarioLogado().getFuncao().equals("administrador")
 					|| autenticacaoBean.getFuncionarioLogado().getFuncao().equals("digitador")) {
 				listaDocumentos = ddao.listar();
+				
 			} else {
 				listaDocumentos = ddao.listarPorResponsavel(autenticacaoBean.getFuncionarioLogado().getId());
 			}
 		} catch (RuntimeException ex) {
 			FacesUtil.addMsgErro("Erro ao listar os Documentos " + ex.getMessage());
+		}
+	}
+	
+	public void listarNotasEmpenho(){
+		try{
+			NotaEmpenhoDAO nedao = new NotaEmpenhoDAO();
+			listaEmpenhos = nedao.buscarPorDocumento(codigo);
+		}catch(RuntimeException ex){
+			FacesUtil.addMsgErro("Erro ao listar as Notas de Empenho " + ex.getMessage());
 		}
 	}
 
@@ -207,6 +230,8 @@ public class DocumentoBean {
 			if (codigo != null) {
 				DocumentoDAO ddao = new DocumentoDAO();
 				docCadastro = ddao.buscarPorCodigo(codigo);
+				NotaEmpenhoDAO nedao = new NotaEmpenhoDAO();
+				listaEmpenhos = nedao.buscarPorDocumento(codigo);
 				// carregar o arquivo armazenado
 				if (!(docCadastro.getDocArquivo()== null)) {
 					DownloadArquivoUtil downloadArquivo = new DownloadArquivoUtil();

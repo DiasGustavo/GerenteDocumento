@@ -24,7 +24,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Table(name = "tbl_nota_empenho")
 @NamedQueries({
 	@NamedQuery(name = "NotaEmpenho.listar", query = "SELECT nota FROM NotaEmpenho nota"),
-	@NamedQuery(name = "NotaEmpenho.buscarPorCodigo", query = "SELECT nota FROM NotaEmpenho nota WHERE nota.id = :codigo")
+	@NamedQuery(name = "NotaEmpenho.buscarPorCodigo", query = "SELECT nota FROM NotaEmpenho nota WHERE nota.id = :codigo"),
+	@NamedQuery(name = "NotaEmpenho.buscarPorDocumento", query = "SELECT nota FROM NotaEmpenho nota WHERE nota.documento = :documento")
 })
 public class NotaEmpenho {
 
@@ -43,6 +44,11 @@ public class NotaEmpenho {
 	@Digits(integer = 7, fraction = 2, message = "coloque um valor válido para o valor")
 	@Column(name = "valor", precision = 9, scale = 2, nullable = false)
 	private BigDecimal valor;
+	
+	@NotEmpty(message = "o campo descrição é obrigatório")
+	@Size(min = 1, max = 30, message= "Descrição deve ter entre 1 e 30 caracteres")
+	@Column(name="descricao", length=30, nullable=false)
+	private String descricao;
 	
 	
 	@Column(name="observacao", length=250)
@@ -84,7 +90,15 @@ public class NotaEmpenho {
 
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
-	}	
+	}
+	
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
 
 	public Documento getDocumento() {
 		return documento;
@@ -94,11 +108,10 @@ public class NotaEmpenho {
 		this.documento = documento;
 	}
 
-
 	@Override
 	public String toString() {
-		return "NotaEmpenho [Id=" + Id + ", numero=" + numero + ", valor=" + valor + ", observacao=" + observacao
-				+ ", documento=" + documento + "]";
+		return "NotaEmpenho [Id=" + Id + ", numero=" + numero + ", valor=" + valor + ", descricao=" + descricao
+				+ ", observacao=" + observacao + ", documento=" + documento + "]";
 	}
 
 	@Override

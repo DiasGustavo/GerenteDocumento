@@ -79,12 +79,13 @@ public class DocumentoDAO {
 		return documento;
 	}
 	
-	public Documento buscarPorProcessoSecretaria (String processo, String secretaria){
+	public Documento buscarPorProcessoSecretaria (Long codigo, String processo, String secretaria){
 		Session sessao = HibernateUtil.getSessionFactory().openSession();
 		Documento documento = null;
 		
 		try{
 			Query consulta = sessao.getNamedQuery("Documento.buscarPorProcessoSecretaria");
+			consulta.setLong("codigo", codigo);
 			consulta.setString("processo", processo);
 			consulta.setString("secretaria", secretaria);
 			documento = (Documento)consulta.uniqueResult();

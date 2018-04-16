@@ -56,7 +56,7 @@
 					style="width: 12%; text-align: center;">
 					<p:button value="Editar" icon="	ui-icon-gear"
 						outcome="/pages/funcionario/funcionarioCadastro.xhtml?faces-redirect=true"
-						rendered="#{autenticacaoBean.funcionarioLogado.matricula == funcionario.matricula or autenticacaoBean.funcionarioLogado.funcao == 'administrador'}">
+						rendered="#{autenticacaoBean.funcionarioLogado.nome == funcionario.nome or autenticacaoBean.funcionarioLogado.funcao == 'administrador'}">
 						<f:param name="funId" value="#{funcionario.id}" />
 						<f:param name="funacao" value="editar" />
 					</p:button>

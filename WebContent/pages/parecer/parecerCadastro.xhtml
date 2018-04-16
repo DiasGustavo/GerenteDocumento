@@ -28,7 +28,7 @@
 
 				<p:outputLabel value="Tipo:" />
 				<p:selectOneMenu id="listaTipo"
-					value="#{parecerBean.parecerCadastro.tipo}">
+					value="#{parecerBean.parecerCadastro.tipo}" style="width:200px;">
 					<f:selectItem itemValue="" itemLabel="Selecione o Tipo" />
 					<f:selectItem itemValue="consumo" itemLabel="Consumo" />
 					<f:selectItem itemValue="serviços Pessoa Fisica"
@@ -53,17 +53,12 @@
 					<f:selectItem itemValue="desapropriação" itemLabel="Desapropriação" />
 					<f:selectItem itemValue="aluguel social e ajuda de custo"
 						itemLabel="Aluguel social e ajuda de custo" />
+					<f:selectItem itemValue="bolsa atleta" itemLabel="Bolsa Atleta" />
+					<f:selectItem itemValue="Ordem Judicial" itemLabel="Ordem Judicial" />
+					<f:selectItem itemValue="Terceirizada" itemLabel="Terceirizada" />
+					<f:selectItem itemValue="Patrocínio" itemLabel="Patrocínio" />
 					<f:validateBean />
 				</p:selectOneMenu>
-				<p:spacer />
-				<p:spacer />
-
-				<p:outputLabel value="Número PCI:" />
-				<p:inputText id="numpci" maxlength="10" size="10"
-					value="#{parecerBean.parecerCadastro.numero}"
-					readonly="#{parecerBean.acao == 'excluir'}">
-					<f:validateBean />
-				</p:inputText>
 
 				<h:outputLabel value="Data: " />
 				<p:calendar id="entrada"
@@ -78,13 +73,14 @@
 				<p:outputLabel value="Processo: " />
 				<p:selectOneMenu id="listaProcesso"
 					value="#{parecerBean.parecerCadastro.documento}"
-					converter="documentoConverter" filter="true" style="width: 230px;">
+					converter="documentoConverter" filter="true" style="width: 200px;">
 					<f:selectItem itemValue="" itemLabel="Selecione o processo" />
 					<f:selectItems value="#{parecerBean.listaDocumentos}"
 						var="documento" itemValue="#{documento}"
-						itemLabel="cod.: #{documento.id} - Nº #{documento.processo} - #{documento.secretaria}" />
+						itemLabel="#{documento.id} - Nº #{documento.processo} - #{documento.secretaria}" />
 					<f:validateBean />
 				</p:selectOneMenu>
+				<p:spacer />
 
 			</h:panelGrid>
 
@@ -114,7 +110,7 @@
 
 			</p:dataTable>
 			<p:outputLabel value="Observação:" />
-			<p:inputTextarea id="conclusao" class="textarea" maxlength="600"
+			<p:inputTextarea id="conclusao" class="textarea" maxlength="8192"
 				value="#{parecerBean.parecerCadastro.conclusao}"
 				readonly="#{parecerBean.acao == 'excluir'}">
 				<f:validateBean />
@@ -123,7 +119,7 @@
 			<p:outputLabel value="Status: " />
 			<p:selectOneMenu id="listaStatus"
 				value="#{parecerBean.parecerCadastro.status}">
-				<f:selectItem itemValue="" itemLabel="Selecione o Status" />
+				<f:selectItem itemValue="sem status" itemLabel="Sem Status" />
 				<f:selectItem itemValue="conformidade" itemLabel="Conformidade" />
 				<f:selectItem itemValue="Conformidade parcial"
 					itemLabel="Conformidade Parcial" />
@@ -136,7 +132,7 @@
 				<p:selectOneMenu id="listaResponsavel"
 					value="#{parecerBean.parecerCadastro.funcionario}"
 					converter="funcionarioConverter" filter="true"
-					filterMatchMode="startsWith" style="width: 150px;">
+					filterMatchMode="startsWith" style="width: 220px;">
 					<f:selectItem itemValue="" itemLabel="Selecione o responsável" />
 					<f:selectItems value="#{parecerBean.listaFuncionarios}"
 						var="responsavel" itemValue="#{responsavel}"
@@ -155,22 +151,22 @@
 						:formCadParecer:listaProcesso 
 						:formCadParecer:listaStatus
 						:formCadParecer:listaTipo
-						:formCadParecer:numpci
 						:formCadParecer:entrada
 						:formCadParecer:conclusao"
 						rendered="#{parecerBean.acao == 'novo'}" />
 					<p:commandButton value="Novo" icon="ui-icon-plus"
 						actionListener="#{parecerBean.novo}"
 						rendered="#{parecerBean.acao == 'novo'}" />
-					<p:commandButton value="Parecer" icon="ui-icon-document"
-						actionListener="#{parecerBean.gerarParecer}" ajax="false"
-						onclick="this.form.target='_blank'"
-						rendered="#{parecerBean.parecerCadastro.numero != null and parecerBean.acao != 'excluir'}" />
-				</p:toolbarGroup>
-				<p:toolbarGroup align="right">
 					<p:commandButton value="Gravar" icon="ui-icon-disk"
 						actionListener="#{parecerBean.editar}" update=":msgGlobal"
 						rendered="#{parecerBean.acao == 'editar'}" />
+					<p:commandButton id="parecerButtom" value="Parecer"
+						icon="ui-icon-document" process="parecerButtom"
+						actionListener="#{parecerBean.gerarParecer}" ajax="false"
+						onclick="this.form.target='_blank'"
+						rendered="#{parecerBean.acao == 'editar'}" />
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
 					<p:commandButton value="Excluir" icon="ui-icon-close"
 						oncomplete="PF('confirmacaoExcluir').show();"
 						rendered="#{parecerBean.acao == 'excluir'}" />
@@ -183,24 +179,30 @@
 		<!-- Dialogo de Atos -->
 		<p:dialog closable="true" draggable="true" modal="true"
 			resizable="false" header="Pesquisa Atos" widgetVar="DlgAtos"
-			appendTo="@(body)" height="400" width="990">
+			appendTo="@(body)" height="400px" width="800px">
 			<h:form id="formAtos">
-				<p:dataTable emptyMessage="Nenhum registro encontrado."
+				<p:dataTable id="tbl_atos"
+					emptyMessage="Nenhum registro encontrado."
 					value="#{parecerBean.listaAtos}"
-					filteredValue="#{parecerBean.listaAtosFiltrados}" var="ato"
-					rows="7" paginator="true" widgetVar="tblAtos">
+					filteredValue="#{parecerBean.listaAtosFiltrados}"
+					selection="#{parecerBean.listaAtosSelecionados}" var="ato" rows="7"
+					rowKey="#{ato.id}" paginator="true" widgetVar="tblAtos">
 
-					<p:column headerText="Código" filterBy="#{ato.id}"
+
+					<p:column selectionMode="multiple"
+						style="width:16px; align:center;" />
+
+					<!--  <p:column headerText="Código" filterBy="#{ato.id}"
 						filterStyle="max-width: 90%; min-width: 90%" style="width: 9%;">
 						<h:outputText value="#{ato.id}" />
-					</p:column>
+					</p:column>-->
 
 					<p:column headerText="Descrição">
 						<h:outputText value="#{ato.descricao}" />
 					</p:column>
 
 					<p:column headerText="Categoria" filterBy="#{ato.categoria}"
-						filterMatchMode="exact">
+						filterMatchMode="exact" style="width:200px">
 
 						<f:facet name="filter">
 							<p:selectOneMenu onchange="PF('tblAtos').filter()"
@@ -230,6 +232,11 @@
 									itemLabel="Desapropriação" />
 								<f:selectItem itemValue="aluguel social e ajuda de custo"
 									itemLabel="Aluguel social e ajuda de custo" />
+								<f:selectItem itemValue="bolsa atleta" itemLabel="Bolsa Atleta" />
+								<f:selectItem itemValue="Ordem Judicial"
+									itemLabel="Ordem Judicial" />
+								<f:selectItem itemValue="Terceirizada" itemLabel="Terceirizada" />
+								<f:selectItem itemValue="Patrocínio" itemLabel="Patrocínio" />
 							</p:selectOneMenu>
 						</f:facet>
 
@@ -237,11 +244,12 @@
 					</p:column>
 
 					<!-- botões -->
-					<p:column style="width:3%;text-align: center">
-						<p:commandButton icon="ui-icon-circle-check"
-							actionListener="#{parecerBean.adicionarAtos(ato)}"
+					<f:facet name="footer">
+						<p:commandButton icon="ui-icon-circle-check" process="tbl_atos"
+							value="Adicionar"
+							actionListener="#{parecerBean.adicionarListAtos}"
 							update=":formCadParecer:tblAtoChecklist" />
-					</p:column>
+					</f:facet>
 				</p:dataTable>
 			</h:form>
 		</p:dialog>

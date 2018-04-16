@@ -13,11 +13,13 @@ import javax.faces.bean.ViewScoped;
 
 import br.com.gerentedocumento.dao.AtosDAO;
 import br.com.gerentedocumento.dao.ChecklistDAO;
+import br.com.gerentedocumento.dao.ControleRegistroDAO;
 import br.com.gerentedocumento.dao.DocumentoDAO;
 import br.com.gerentedocumento.dao.FuncionarioDAO;
 import br.com.gerentedocumento.dao.ParecerDAO;
 import br.com.gerentedocumento.domain.Atos;
 import br.com.gerentedocumento.domain.Checklist;
+import br.com.gerentedocumento.domain.ControleRegistro;
 import br.com.gerentedocumento.domain.Documento;
 import br.com.gerentedocumento.domain.Funcionario;
 import br.com.gerentedocumento.domain.Parecer;
@@ -37,6 +39,7 @@ public class ParecerBean {
 	private List<Funcionario> listaFuncionarios;
 	private List<Atos> listaAtos;
 	private List<Atos> listaAtosFiltrados;
+	private List<Atos> listaAtosSelecionados;
 	private List<Documento> listaDocumentos;
 	private List<Checklist> listaChecklists;
 
@@ -45,7 +48,7 @@ public class ParecerBean {
 	private String acao;
 	private Long codigo;
 	private Date dataCriacao;
-	
+
 	@ManagedProperty(value = "#{autenticacaoBean}")
 	private AutenticacaoBean autenticacaoBean;
 
@@ -112,6 +115,14 @@ public class ParecerBean {
 		this.listaDocumentos = listaDocumentos;
 	}
 
+	public List<Atos> getListaAtosSelecionados() {
+		return listaAtosSelecionados;
+	}
+
+	public void setListaAtosSelecionados(List<Atos> listaAtosSelecionados) {
+		this.listaAtosSelecionados = listaAtosSelecionados;
+	}
+
 	public List<Checklist> getListaChecklists() {
 		if (listaChecklists == null) {
 			listaChecklists = new ArrayList<>();
@@ -156,7 +167,7 @@ public class ParecerBean {
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
-	
+
 	public void novo() {
 		parecerCadastro = new Parecer();
 	}
@@ -172,19 +183,29 @@ public class ParecerBean {
 	public void salvar() {
 		try {
 			ParecerDAO pdao = new ParecerDAO();
+			// numero do parecer automático
+			ControleRegistroDAO crdao = new ControleRegistroDAO();
+			ControleRegistro registro = crdao.buscarPorDescricao("parecer");
+			int numero = registro.getValor();
+			String numeroParecer = String.valueOf(numero);
+			parecerCadastro.setNumero(numeroParecer);
+			registro.setValor(registro.getValor() + 1);
+			crdao.editar(registro);
+
 			Long codigoParecer = pdao.salvar(parecerCadastro);
-			Parecer parecerFK = pdao.buscarPorCodigo(codigoParecer);			
-			
+			Parecer parecerFK = pdao.buscarPorCodigo(codigoParecer);
+
 			for (Checklist checklist : listaChecklists) {
 				checklist.setParecer(parecerFK);
 
 				ChecklistDAO cdao = new ChecklistDAO();
 				cdao.salvar(checklist);
 			}
+			FacesUtil.addMsgInfo("Parecer número: " + numeroParecer + " Cadastro com Sucesso!");
+
 			parecerCadastro = new Parecer();
 			listaChecklists = new ArrayList<>();
-			
-			FacesUtil.addMsgInfo("Parecer Cadastro com Sucesso!");
+
 		} catch (RuntimeException ex) {
 			FacesUtil.addMsgErro("Ocorreu um erro ao salvar o Parecer" + ex.getMessage());
 		}
@@ -193,7 +214,13 @@ public class ParecerBean {
 	public void listar() {
 		try {
 			ParecerDAO pdao = new ParecerDAO();
-			listaPareceres = pdao.listar();
+			if (autenticacaoBean.getFuncionarioLogado().getFuncao().equals("administrador")
+					|| autenticacaoBean.getFuncionarioLogado().getFuncao().equals("digitador")) {
+				listaPareceres = pdao.listar();
+			} else {
+				listaPareceres = pdao.buscarPorResponsavel(autenticacaoBean.getFuncionarioLogado().getId());
+			}
+
 		} catch (RuntimeException ex) {
 			FacesUtil.addMsgErro("Ocorreu um erro ao listar os Pareceres " + ex.getMessage());
 		}
@@ -214,7 +241,7 @@ public class ParecerBean {
 
 				DocumentoDAO ddao = new DocumentoDAO();
 				listaDocumentos = ddao.listar();
-				
+
 				FuncionarioDAO fdao = new FuncionarioDAO();
 				listaFuncionarios = fdao.listar();
 
@@ -236,6 +263,13 @@ public class ParecerBean {
 			}
 		} catch (RuntimeException ex) {
 			FacesUtil.addMsgErro("Erro ao carregar os dados do parecer " + ex.getMessage());
+		}
+	}
+
+	public void adicionarListAtos() {
+		for (int pos = 0; pos < listaAtosSelecionados.size(); pos++) {
+			Atos ato = (Atos) listaAtosSelecionados.get(pos);
+			adicionarAtos(ato);
 		}
 	}
 
@@ -285,10 +319,10 @@ public class ParecerBean {
 			}
 		}
 		ChecklistDAO cdao = new ChecklistDAO();
-		
+
 		if (posicaoEncontrada > -1) {
 			listaChecklists.remove(posicaoEncontrada);
-			
+
 			if (checklist.getParecer() != null) {
 				Checklist checkTemp = cdao.buscarPorParecerAto(checklist.getParecer().getId(),
 						checklist.getAtos().getId());
@@ -347,9 +381,9 @@ public class ParecerBean {
 
 	public void gerarParecer() {
 		String caminho = "/parecer/parecer.jasper";
-		
+
 		Map<String, Object> parametros = new HashMap<>();
-		
+
 		if (this.parecerCadastro.getStatus().equals("conformidade")) {
 			parametros.put("DESFECHO", "possuindo as");
 		}
@@ -359,13 +393,50 @@ public class ParecerBean {
 		if (this.parecerCadastro.getStatus().equals("desconformidade")) {
 			parametros.put("DESFECHO", "não possuindo as");
 		}
+		if (this.parecerCadastro.getStatus().equals("sem status")) {
+			parametros.put("DESFECHO", "sem status");
+		}
 		parametros.put("NUM_PARECER", this.parecerCadastro.getNumero());
 		parametros.put("COD_DOC_P", this.parecerCadastro.getDocumento().getId());
 		parametros.put("RESPONSAVEL", this.parecerCadastro.getFuncionario().getNome());
 		parametros.put("FUNCAO_RESP", this.parecerCadastro.getFuncionario().getFuncao());
 		parametros.put("COD_PARECER", this.parecerCadastro.getId());
-		
+
 		GeraParecer geraParecer = new GeraParecer();
 		geraParecer.geradorDeParecer(caminho, parametros);
+	}
+
+	public void gerarParecer(Long cod) {
+		if (cod != null) {
+			ParecerDAO pdao = new ParecerDAO();
+			parecerCadastro = pdao.buscarPorCodigo(cod);
+
+			ChecklistDAO cdao = new ChecklistDAO();
+			listaChecklists = cdao.buscarPorParecer(cod);
+			String caminho = "/parecer/parecer.jasper";
+
+			Map<String, Object> parametros = new HashMap<>();
+
+			if (this.parecerCadastro.getStatus().equals("conformidade")) {
+				parametros.put("DESFECHO", "possuindo as");
+			}
+			if (this.parecerCadastro.getStatus().equals("Conformidade parcial")) {
+				parametros.put("DESFECHO", "possuindo parte das");
+			}
+			if (this.parecerCadastro.getStatus().equals("desconformidade")) {
+				parametros.put("DESFECHO", "não possuindo as");
+			}
+			if (this.parecerCadastro.getStatus().equals("sem status")) {
+				parametros.put("DESFECHO", "sem status");
+			}
+			parametros.put("NUM_PARECER", this.parecerCadastro.getNumero());
+			parametros.put("COD_DOC_P", this.parecerCadastro.getDocumento().getId());
+			parametros.put("RESPONSAVEL", this.parecerCadastro.getFuncionario().getNome());
+			parametros.put("FUNCAO_RESP", this.parecerCadastro.getFuncionario().getFuncao());
+			parametros.put("COD_PARECER", this.parecerCadastro.getId());
+
+			GeraParecer geraParecer = new GeraParecer();
+			geraParecer.geradorDeParecer(caminho, parametros);
+		}
 	}
 }

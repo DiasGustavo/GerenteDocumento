@@ -21,6 +21,7 @@ public class AtosBean {
 	
 	private String acao;
 	private Long codigo;
+	
 	public Atos getAtosCadastro() {
 		if (atosCadastro == null){
 			atosCadastro = new Atos();

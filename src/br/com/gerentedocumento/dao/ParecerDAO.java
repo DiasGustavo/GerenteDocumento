@@ -60,6 +60,22 @@ public class ParecerDAO {
 		return parecer;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<Parecer> buscarPorResponsavel(Long codigo){
+		Session sessao = HibernateUtil.getSessionFactory().openSession();
+		List<Parecer> listaPareceres = null;
+		try{
+			Query consulta = sessao.getNamedQuery("Parecer.buscarPorResponsavel");
+			consulta.setLong("funcionario", codigo);
+			listaPareceres = consulta.list();
+		}catch(RuntimeException ex){
+			throw ex;
+		}finally{
+			sessao.close();
+		}
+		return listaPareceres;
+	}
+	
 	public void editar(Parecer parecer){
 		Session sessao = HibernateUtil.getSessionFactory().openSession();
 		Transaction transacao = null;

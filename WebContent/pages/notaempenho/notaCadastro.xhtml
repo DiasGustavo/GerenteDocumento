@@ -36,6 +36,16 @@
 					<f:validateBean />
 				</p:inputText>
 
+				<p:outputLabel value="Descrição:" />
+				<p:selectOneMenu id="listaFuncoes"
+					value="#{notaEmpenhoBean.notaCadastro.descricao}">
+					<f:selectItem itemValue="" itemLabel="Selecione o tipo" />
+					<f:selectItem itemValue="Empenho" itemLabel="Empenho" />
+					<f:selectItem itemValue="SubEmpenho" itemLabel="SubEmpenho" />
+					<f:selectItem itemValue="Guia de Despesa Extra-Orçamentária" itemLabel="Guia de Despesa Extra-Orçamentária" />					
+					<f:validateBean />
+				</p:selectOneMenu>
+
 				<p:outputLabel value="Valor:" />
 				<p:inputText maxlength="10" size="10"
 					value="#{notaEmpenhoBean.notaCadastro.valor}"
@@ -46,14 +56,13 @@
 				</p:inputText>
 
 				<p:outputLabel value="Observações:" />
-				<p:inputTextarea class="textarea" maxlength="50"
+				<p:inputTextarea class="textarea" maxlength="250"
 					value="#{notaEmpenhoBean.notaCadastro.observacao}"
-					readonly="#{notaEmpenhoBean.acao == 'excluir'}" required="true"
-					requiredMessage="Campo Observação Obrigatório!">
+					readonly="#{notaEmpenhoBean.acao == 'excluir'}">
 					<f:validateBean />
 				</p:inputTextarea>
 
-				<p:outputLabel value="Documento:" />
+				<p:outputLabel value="Processo:" />
 				<p:selectOneMenu id="listaDocumentos"
 					value="#{notaEmpenhoBean.notaCadastro.documento}"
 					converter="documentoConverter" filter="true"
@@ -61,7 +70,7 @@
 					<f:selectItem itemValue="" itemLabel="Selecione o Documento" />
 					<f:selectItems value="#{notaEmpenhoBean.listaDocumentos}"
 						var="documento" itemValue="#{documento}"
-						itemLabel="cod.: #{documento.id} - Nº #{documento.processo} - #{documento.secretaria}" />
+						itemLabel="#{documento.id} - Nº #{documento.processo} - #{documento.secretaria}" />
 					<f:validateBean />
 				</p:selectOneMenu>
 

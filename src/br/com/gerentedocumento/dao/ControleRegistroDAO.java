@@ -6,107 +6,107 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import br.com.gerentedocumento.domain.NotaEmpenho;
+import br.com.gerentedocumento.domain.ControleRegistro;
+import br.com.gerentedocumento.util.FacesUtil;
 import br.com.gerentedocumento.util.HibernateUtil;
 
-public class NotaEmpenhoDAO {
+public class ControleRegistroDAO {
 
-	public void salvar(NotaEmpenho nota){
+	public void salvar(ControleRegistro controle){
 		Session sessao = HibernateUtil.getSessionFactory().openSession();
 		Transaction transacao = null;
-		
 		try{
 			transacao = sessao.beginTransaction();
-			sessao.save(nota);
+			sessao.save(controle);
 			transacao.commit();
 		}catch(RuntimeException ex){
-			if (transacao != null){
+			if(transacao != null){
 				transacao.rollback();
 			}
-		}finally{
-			sessao.close();
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<NotaEmpenho> listar(){
-		Session sessao = HibernateUtil.getSessionFactory().openSession();
-		List<NotaEmpenho> listaNotas = null;
-		
-		try{
-			Query consulta = sessao.getNamedQuery("NotaEmpenho.listar");
-			listaNotas = consulta.list();
-		}catch(RuntimeException ex){
 			throw ex;
 		}finally{
 			sessao.close();
 		}
 		
-		return listaNotas;
 	}
 	
-	public NotaEmpenho buscarPorCodigo(Long codigo){
+	@SuppressWarnings("unchecked")
+	public List<ControleRegistro> listar(){
 		Session sessao = HibernateUtil.getSessionFactory().openSession();
-		NotaEmpenho nota = null;
-		
+		List<ControleRegistro> registros = null;
 		try{
-			Query consulta = sessao.getNamedQuery("NotaEmpenho.buscarPorCodigo");
+			Query consulta = sessao.getNamedQuery("controleRegistro.listar");
+			registros = consulta.list();
+		}catch(RuntimeException ex){
+			throw ex;
+		}finally{
+			sessao.close();
+		}
+		return registros;	
+	}
+	
+	public ControleRegistro buscarPorCodigo(Long codigo){
+		Session sessao = HibernateUtil.getSessionFactory().openSession();
+		ControleRegistro controle = null;
+		try{
+			Query consulta = sessao.getNamedQuery("controleRegistro.buscarPorCodigo");
 			consulta.setLong("codigo", codigo);
-			nota = (NotaEmpenho)consulta.uniqueResult();
+			controle = (ControleRegistro) consulta.uniqueResult();
+		}catch(RuntimeException ex){
+			FacesUtil.addMsgErro("Ocorreu um erro ao carregar o registro " + ex.getMessage());
+		}finally{
+			sessao.close();
+		}
+		return controle;
+	}
+	
+	public ControleRegistro buscarPorDescricao(String descricao){
+		Session sessao = HibernateUtil.getSessionFactory().openSession();
+		ControleRegistro controle = null;
+		
+		try{
+			Query consulta = sessao.getNamedQuery("controleRegistro.buscarPorDescricao");
+			consulta.setString("descricao", descricao);
+			controle = (ControleRegistro)consulta.uniqueResult();
 		}catch(RuntimeException ex){
 			throw ex;
 		}finally{
 			sessao.close();
 		}
-		return nota;
+		return controle;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<NotaEmpenho> buscarPorDocumento(Long codigo){
+	public void editar(ControleRegistro controle){
 		Session sessao = HibernateUtil.getSessionFactory().openSession();
-		List<NotaEmpenho> notas = null;
+		Transaction transacao = null;
 		
 		try{
-			Query consulta = sessao.getNamedQuery("NotaEmpenho.buscarPorDocumento");
-			consulta.setLong("documento", codigo);
-			notas = consulta.list();
+			transacao = sessao.beginTransaction();
+			sessao.update(controle);
+			transacao.commit();
 		}catch(RuntimeException ex){
+			if(transacao != null){
+				transacao.rollback();
+			}
 			throw ex;
 		}finally{
 			sessao.close();
 		}
-		return notas;
 	}
 	
-	public void editar(NotaEmpenho nota){
+	public void excluir(ControleRegistro controle){
 		Session sessao = HibernateUtil.getSessionFactory().openSession();
 		Transaction transacao = null;
 		
 		try{
 			transacao = sessao.beginTransaction();
-			sessao.update(nota);
+			sessao.delete(controle);
 			transacao.commit();
 		}catch(RuntimeException ex){
-			if (transacao != null){
+			if(transacao != null){
 				transacao.rollback();
 			}
-		}finally{
-			sessao.close();
-		}
-	}
-	
-	public void excluir (NotaEmpenho nota){
-		Session sessao = HibernateUtil.getSessionFactory().openSession();
-		Transaction transacao = null;
-		
-		try{
-			transacao = sessao.beginTransaction();
-			sessao.delete(nota);
-			transacao.commit();
-		}catch(RuntimeException ex){
-			if (transacao != null){
-				transacao.rollback();
-			}
+			throw ex;
 		}finally{
 			sessao.close();
 		}

@@ -23,50 +23,50 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(name = "tbl_parecer")
 @NamedQueries({
-	@NamedQuery(name = "Parecer.listar", query = "SELECT parecer FROM Parecer parecer"),
-	@NamedQuery(name = "Parecer.buscarPorCodigo", query = "SELECT parecer FROM Parecer parecer WHERE parecer.id = :codigo")
-})
+		@NamedQuery(name = "Parecer.listar", query = "SELECT parecer FROM Parecer parecer ORDER BY parecer.id DESC"),
+		@NamedQuery(name = "Parecer.buscarPorCodigo", query = "SELECT parecer FROM Parecer parecer WHERE parecer.id = :codigo"),
+		@NamedQuery(name = "Parecer.buscarPorResponsavel", query = "SELECT parecer FROM Parecer parecer WHERE parecer.funcionario = :funcionario ORDER BY parecer.id DESC") })
 public class Parecer {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "cod_parecer")
 	private Long id;
-	
+
 	@NotEmpty(message = "o campo número é obrigatório")
-	@Size(min = 3, max = 10, message= "Número deve ter entre 1 e 10 caracteres")
-	@Column(name="numero", length=10, nullable=false)
+	@Size(min = 3, max = 10, message = "Número deve ter entre 1 e 10 caracteres")
+	@Column(name = "numero", length = 10, nullable = false)
 	private String numero;
-	//é o campo observação
-	@Column(name="conclusao", length=2048)
+
+	// é o campo observação
+	@Column(name = "conclusao", length = 8192)
 	private String conclusao;
-	
+
 	@NotEmpty(message = "o campo tipo é obrigatório")
-	@Size(min = 3, max = 50, message= "Tipo deve ter entre 3 e 50 caracteres")
-	@Column(name="objeto", length=50, nullable=false)
+	@Size(min = 3, max = 50, message = "Tipo deve ter entre 3 e 50 caracteres")
+	@Column(name = "objeto", length = 50, nullable = false)
 	private String tipo;
-	
+
 	@NotEmpty(message = "o campo status é obrigatório")
-	@Size(min = 3, max = 250, message= "Status deve ter entre 3 e 250 caracteres")
-	@Column(name="status", length=250, nullable=false)
+	@Size(min = 3, max = 250, message = "Status deve ter entre 3 e 250 caracteres")
+	@Column(name = "status", length = 250, nullable = false)
 	private String status;
-	
+
 	@NotNull(message = "O campo Funcionário é obrigatório")
-	@ManyToOne (fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "fk_funcionario", referencedColumnName = "cod_fun", nullable = false)
 	private Funcionario funcionario;
-	
+
 	@NotNull(message = "o campo data de entrada é obrigatório")
-	@Temporal(value =TemporalType.DATE)
+	@Temporal(value = TemporalType.DATE)
 	@Column(name = "dt_entrada", nullable = false)
 	private Date dataEntrada;
-	
+
 	@NotNull(message = "O campo Documento é obrigatório")
-	@ManyToOne (fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "fk_documento", referencedColumnName = "cod_doc", nullable = false)
 	private Documento documento;
-	
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -98,7 +98,7 @@ public class Parecer {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-	
+
 	public String getStatus() {
 		return status;
 	}
@@ -129,7 +129,7 @@ public class Parecer {
 
 	public void setDocumento(Documento documento) {
 		this.documento = documento;
-	}	
+	}
 
 	@Override
 	public String toString() {
@@ -161,5 +161,5 @@ public class Parecer {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}	
+	}
 }

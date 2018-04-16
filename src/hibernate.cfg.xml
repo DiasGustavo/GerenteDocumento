@@ -8,9 +8,18 @@
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/db_documentos</property>
 		<property name="hibernate.connection.username">root</property>
-		<property name="hibernate.connection.password">totatolatomtarne</property>
+		<property name="hibernate.connection.password">java1203</property>
 		
-		<property name="connection.pool_size">1</property>
+		<!-- organização do pool de conexão -->
+		<!-- Número mínimo de conexões que o pool irá manter -->
+		<property name="hibernate.c3p0.min_size">5</property>
+		<!-- Número máximo de conexões que o pool irá manter. -->
+		<property name="hibernate.c3p0.max_size">20</property>
+		<!-- configurar que as conexões ociosas por mais de 1800s ele fecha -->
+		<property name="hibernate.c3p0.timeout">1800</property>
+		<!-- configura quantas consultas serão colocadas em cache em um ambito geral -->
+		<property name="hibernate.c3p0.max_statements">100</property>
+		<!-- fim da configuração do pool -->
 		
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
 			
@@ -31,6 +40,7 @@
 		<mapping class="br.com.gerentedocumento.domain.Checklist"/>
 		<mapping class="br.com.gerentedocumento.domain.Parecer"/>
 		<mapping class="br.com.gerentedocumento.domain.NotaEmpenho"/>
+		<mapping class="br.com.gerentedocumento.domain.ControleRegistro"/>
 		
 	</session-factory>
 </hibernate-configuration>

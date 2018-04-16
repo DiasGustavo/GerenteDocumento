@@ -88,6 +88,4 @@ public class Atos {
 			return false;
 		return true;
 	}
-	
-	
 }

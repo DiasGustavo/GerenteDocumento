@@ -27,10 +27,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(name = "tbl_documento")
 @NamedQueries({
-	@NamedQuery(name = "Documento.listar", query = "SELECT documento FROM Documento documento"),
+	@NamedQuery(name = "Documento.listar", query = "SELECT documento FROM Documento documento ORDER BY documento.id DESC"),
 	@NamedQuery(name = "Documento.buscarPorCodigo", query = "SELECT documento FROM Documento documento WHERE documento.id = :codigo"),
-	@NamedQuery(name = "Documento.buscarPorProcessoSecretaria", query = "SELECT documento FROM Documento documento WHERE documento.processo = :processo AND documento.secretaria = :secretaria"),
-	@NamedQuery(name = "Documento.listarPorResponsavel", query = "SELECT documento FROM Documento documento WHERE documento.responsavel = :responsavel")
+	@NamedQuery(name = "Documento.buscarPorProcessoSecretaria", query = "SELECT documento FROM Documento documento WHERE documento.id = :codigo AND documento.processo = :processo AND documento.secretaria = :secretaria"),
+	@NamedQuery(name = "Documento.listarPorResponsavel", query = "SELECT documento FROM Documento documento WHERE documento.responsavel = :responsavel ORDER BY documento.id DESC")
 })
 public class Documento {
 

@@ -57,7 +57,7 @@
 
 				<p:column headerText="Nº Parecer" filterBy="#{parecer.numero}"
 					filterStyle="max-width: 80%; min-width: 80%;"
-					style="width: 9%; text-align: center;">
+					style="width: 7%; text-align: center;">
 					<h:outputText value="#{parecer.numero}" />
 				</p:column>
 
@@ -68,9 +68,13 @@
 					<h:outputText value="#{parecer.documento.processo}" />
 				</p:column>
 
+				<p:column headerText="Responsável"
+					style="width: 10%; text-align: center;">
+					<h:outputText value="#{parecer.funcionario.nome}" />
+				</p:column>
+
 				<p:column headerText="Expedicação"
-					sortBy="#{parecer.dataEntrada}"
-					style="width: 7%; text-align: center;">
+					style="width: 8%; text-align: center;">
 					<h:outputText value="#{parecer.dataEntrada}">
 						<f:convertDateTime pattern="dd/MM/yyyy" locale="pt"
 							timeZone="GMT-3" />
@@ -80,7 +84,7 @@
 				<p:column headerText="Favorecido"
 					filterBy="#{parecer.documento.empresa.razao}"
 					filterStyle="max-width: 70%; min-width: 70%;"
-					style="width: 8%; text-align: center;">
+					style="width: 10%; text-align: center;">
 					<h:outputText value="#{parecer.documento.empresa.razao}" />
 				</p:column>
 
@@ -92,17 +96,23 @@
 				</p:column>
 
 				<p:column headerText="Opções"
-					style="width: 12%; text-align: center;" exportable="false">
+					style="width: 15%; text-align: center;" exportable="false"
+					rendered="#{parecerBean.autenticacaoBean.funcionarioLogado.funcao != 'digitador'}">
 					<p:button value="Editar" icon="	ui-icon-gear"
 						outcome="/pages/parecer/parecerCadastro.xhtml?faces-redirect=true">
 						<f:param name="parId" value="#{parecer.id}" />
 						<f:param name="paracao" value="editar" />
 					</p:button>
 					<p:button value="Excluir" icon="ui-icon-close"
-						outcome="/pages/parecer/parecerCadastro.xhtml?faces-redirect=true">
+						outcome="/pages/parecer/parecerCadastro.xhtml?faces-redirect=true"
+						rendered="#{parecerBean.autenticacaoBean.funcionarioLogado.funcao == 'administrador'}">						
 						<f:param name="parId" value="#{parecer.id}" />
 						<f:param name="paracao" value="excluir" />
 					</p:button>
+					<p:commandButton id="parecerButtom" value="Parecer"
+						icon="ui-icon-document" process="parecerButtom"
+						actionListener="#{parecerBean.gerarParecer(parecer.id)}"
+						ajax="false" onclick="this.form.target='_blank'"/>
 				</p:column>
 
 			</p:dataTable>

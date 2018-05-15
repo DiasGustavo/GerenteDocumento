@@ -26,6 +26,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 	@NamedQuery(name = "NotaEmpenho.listar", query = "SELECT nota FROM NotaEmpenho nota"),
 	@NamedQuery(name = "NotaEmpenho.buscarPorCodigo", query = "SELECT nota FROM NotaEmpenho nota WHERE nota.id = :codigo"),
 	@NamedQuery(name = "NotaEmpenho.buscarPorDocumento", query = "SELECT nota FROM NotaEmpenho nota WHERE nota.documento = :documento")
+	
 })
 public class NotaEmpenho {
 
@@ -46,8 +47,8 @@ public class NotaEmpenho {
 	private BigDecimal valor;
 	
 	@NotEmpty(message = "o campo descrição é obrigatório")
-	@Size(min = 1, max = 30, message= "Descrição deve ter entre 1 e 30 caracteres")
-	@Column(name="descricao", length=30, nullable=false)
+	@Size(min = 1, max = 50, message= "Descrição deve ter entre 1 e 50 caracteres")
+	@Column(name="descricao", length=50, nullable=false)
 	private String descricao;
 	
 	

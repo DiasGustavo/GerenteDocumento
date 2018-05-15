@@ -96,8 +96,7 @@
 				</p:column>
 
 				<p:column headerText="Opções"
-					style="width: 15%; text-align: center;" exportable="false"
-					rendered="#{parecerBean.autenticacaoBean.funcionarioLogado.funcao != 'digitador'}">
+					style="width: 15%; text-align: center;" exportable="false">
 					<p:button value="Editar" icon="	ui-icon-gear"
 						outcome="/pages/parecer/parecerCadastro.xhtml?faces-redirect=true">
 						<f:param name="parId" value="#{parecer.id}" />

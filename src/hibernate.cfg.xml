@@ -11,14 +11,16 @@
 		<property name="hibernate.connection.password">java1203</property>
 		
 		<!-- organização do pool de conexão -->
+		<property name="c3p0.acquire_increment">4</property> 
 		<!-- Número mínimo de conexões que o pool irá manter -->
 		<property name="hibernate.c3p0.min_size">5</property>
 		<!-- Número máximo de conexões que o pool irá manter. -->
-		<property name="hibernate.c3p0.max_size">20</property>
-		<!-- configurar que as conexões ociosas por mais de 1800s ele fecha -->
-		<property name="hibernate.c3p0.timeout">1800</property>
+		<property name="hibernate.c3p0.max_size">100</property>
+		<!-- configurar que as conexões ociosas por mais de 144000s ele fecha -->
+		<property name="hibernate.c3p0.timeout">144000</property>
 		<!-- configura quantas consultas serão colocadas em cache em um ambito geral -->
 		<property name="hibernate.c3p0.max_statements">100</property>
+		<property name="hibernate.c3p0.idle_test_period">60</property> <!-- segundos -->
 		<!-- fim da configuração do pool -->
 		
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>

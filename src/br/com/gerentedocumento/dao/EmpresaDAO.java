@@ -55,6 +55,7 @@ public class EmpresaDAO {
 		return empresa;
 	}
 	
+		
 	public void editar(Empresa empresa){
 		Session sessao = HibernateUtil.getSessionFactory().openSession();
 		Transaction transacao = null;

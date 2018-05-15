@@ -76,6 +76,8 @@
 						rendered="#{autenticacaoBean.funcionarioLogado.funcao != null}">
 						<p:menuitem value="Documentos"
 							outcome="/pages/reports/relatorio_documentos.xhtml" />
+						<p:menuitem value="Demonstrativos"
+							outcome="/pages/reports/demonstrativo.xhtml" />
 					</p:submenu>
 					<p:submenu label="Configurações" rendered="#{autenticacaoBean.funcionarioLogado.funcao == 'administrador'}">
 						<p:menuitem value="Registros"

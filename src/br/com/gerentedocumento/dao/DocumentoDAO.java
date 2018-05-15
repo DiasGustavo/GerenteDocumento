@@ -47,6 +47,22 @@ public class DocumentoDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<Object[]> listarPorMes(){
+		Session sessao = HibernateUtil.getSessionFactory().openSession();
+		List<Object[]> listaDocumentos = null;
+		
+		try{
+			Query consulta = sessao.getNamedQuery("Documento.listarPorMes");
+			listaDocumentos = consulta.list();
+		}catch(RuntimeException ex){
+			throw ex;
+		}finally{
+			sessao.close();
+		}
+		return listaDocumentos;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<Documento> listarPorResponsavel(Long codigo){
 		Session sessao = HibernateUtil.getSessionFactory().openSession();
 		List<Documento> listaDocumentos = null;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2018-04-04T09:50:44 -->
+<!-- 2018-04-27T12:51:45 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="parecer" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cbf6d102-8c96-4a30-9b95-7f2304ae5f6c">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="db_documentos"/>
@@ -510,4 +510,43 @@ WHERE
 	<pageHeader>
 		<band height="59" splitType="Stretch"/>
 	</pageHeader>
+	<pageFooter>
+		<band height="25">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER}.intValue()>1]]></printWhenExpression>
+			<staticText>
+				<reportElement style="Detail" positionType="Float" x="0" y="0" width="40" height="20" uuid="99c2e7e8-3ac1-4291-95d5-7f5b2059a79f"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[PCI nº]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Detail" positionType="Float" x="36" y="0" width="92" height="20" uuid="806a9720-711a-41b1-896b-f1296c354327"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="Detail" positionType="Float" isPrintRepeatedValues="false" x="98" y="5" width="100" height="20" isPrintInFirstWholeBand="true" uuid="07a57907-5f82-4f29-966a-53dbc8859122">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{razao}.length()>0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Favorecido: "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" x="168" y="5" width="343" height="19" uuid="986046c7-e30a-4377-889a-7b00e4573c99">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font fontName="SansSerif" size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{razao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
 </jasperReport>

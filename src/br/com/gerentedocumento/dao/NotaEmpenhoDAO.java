@@ -76,7 +76,7 @@ public class NotaEmpenhoDAO {
 			sessao.close();
 		}
 		return notas;
-	}
+	}	
 	
 	public void editar(NotaEmpenho nota){
 		Session sessao = HibernateUtil.getSessionFactory().openSession();

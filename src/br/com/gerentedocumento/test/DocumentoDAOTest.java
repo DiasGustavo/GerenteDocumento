@@ -46,6 +46,25 @@ public class DocumentoDAOTest {
 	}
 	
 	@Test
+	
+	public void listarPorMes(){
+		DocumentoDAO ddao = new DocumentoDAO();
+		List<Object[]> listaDocumentos = ddao.listarPorMes();
+		
+		for(Object [] teste : listaDocumentos){
+			System.out.println("processos: " + teste[0]);
+			System.out.println("mês: " + teste[1]);
+			System.out.println("ano: " + teste[2]);
+			//System.out.println("teste: " + teste[1]);
+		}
+		/*
+		for(Documento documento : listaDocumentos){
+			System.out.println(documento);
+		}*/
+	}
+	
+	@Test
+	@Ignore
 	public void listarPorResponsavel(){
 		DocumentoDAO ddao= new DocumentoDAO();
 		List<Documento> listaDocumentos = ddao.listarPorResponsavel(1L);
@@ -79,7 +98,7 @@ public class DocumentoDAOTest {
 	@Ignore
 	public void excluir(){
 		DocumentoDAO ddao = new DocumentoDAO();
-		Documento documento = ddao.buscarPorCodigo(1L);
+		Documento documento = ddao.buscarPorCodigo(193L);
 		
 		ddao.excluir(documento);
 	}

@@ -13,6 +13,8 @@ import br.com.gerentedocumento.domain.Funcionario;
 import br.com.gerentedocumento.util.FacesUtil;
 import br.com.gerentedocumento.util.GeraRelatorio;
 
+
+
 @ManagedBean
 @ViewScoped
 public class RelatoriosBean {
@@ -22,7 +24,8 @@ public class RelatoriosBean {
 	private Funcionario responsavel;
 	private Date entrada;
 	private Date saida;
-
+	
+	
 	private List<Funcionario> listaFuncionarios;
 
 	public String getStatus() {
@@ -67,6 +70,8 @@ public class RelatoriosBean {
 	public void setSaida(Date saida) {
 		this.saida = saida;
 	}
+	
+	
 
 	public List<Funcionario> getListaFuncionarios() {
 		return listaFuncionarios;
@@ -102,6 +107,10 @@ public class RelatoriosBean {
 
 		GeraRelatorio gerador = new GeraRelatorio();
 		gerador.geradorDeRelatorios(caminho, parametros);
-	}
+	}	
+	
+	
+
+	
 
 }

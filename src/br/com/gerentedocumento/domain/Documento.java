@@ -30,7 +30,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 	@NamedQuery(name = "Documento.listar", query = "SELECT documento FROM Documento documento ORDER BY documento.id DESC"),
 	@NamedQuery(name = "Documento.buscarPorCodigo", query = "SELECT documento FROM Documento documento WHERE documento.id = :codigo"),
 	@NamedQuery(name = "Documento.buscarPorProcessoSecretaria", query = "SELECT documento FROM Documento documento WHERE documento.id = :codigo AND documento.processo = :processo AND documento.secretaria = :secretaria"),
-	@NamedQuery(name = "Documento.listarPorResponsavel", query = "SELECT documento FROM Documento documento WHERE documento.responsavel = :responsavel ORDER BY documento.id DESC")
+	@NamedQuery(name = "Documento.listarPorResponsavel", query = "SELECT documento FROM Documento documento WHERE documento.responsavel = :responsavel ORDER BY documento.id DESC"),
+	@NamedQuery(name = "Documento.listarPorMes", query = "SELECT COUNT(*), MONTH(documento.dataEntrada), YEAR(dataEntrada) FROM Documento documento GROUP BY MONTH(documento.dataEntrada)")
 })
 public class Documento {
 

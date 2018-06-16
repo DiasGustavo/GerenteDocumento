@@ -21,6 +21,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 	@NamedQuery(name = "Checklist.listar", query = "SELECT checklist FROM Checklist checklist"),
 	@NamedQuery(name = "Checklist.buscarPorCodigo", query = "SELECT checklist FROM Checklist checklist WHERE checklist.id = :codigo"),
 	@NamedQuery(name = "Checklist.buscarPorParecer", query = "SELECT checklist FROM Checklist checklist WHERE checklist.parecer = :codigo"),
+	@NamedQuery(name = "Checklist.buscarPorParecerStatus", query = "SELECT checklist FROM Checklist checklist WHERE checklist.parecer = :codigo AND checklist.status = :status"),
 	@NamedQuery(name = "Checklist.buscarPorParecerAto", query = "SELECT checklist FROM Checklist checklist WHERE checklist.parecer = :codigo AND checklist.atos = :atosCodigo")
 })
 public class Checklist {
@@ -34,6 +35,11 @@ public class Checklist {
 	@Size(min=1, max=50, message = "a categoria deve ter entre 1 e 50 caracteres")
 	@Column(name = "categoria", length = 50)
 	private String categoria;
+	
+	@NotEmpty(message = "o campo Status é obrigatório")
+	@Size(min=1, max=50, message = "o status deve ter entre 1 e 10 caracteres")
+	@Column(name = "status", length = 10)
+	private String status;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "fk_atos", referencedColumnName = "cod_atos")
@@ -57,6 +63,14 @@ public class Checklist {
 
 	public void setCateoria(String categoria) {
 		this.categoria = categoria;
+	}	
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Atos getAtos() {

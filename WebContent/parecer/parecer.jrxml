@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2018-04-27T12:51:45 -->
+<!-- 2018-06-13T11:38:47 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="parecer" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cbf6d102-8c96-4a30-9b95-7f2304ae5f6c">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="db_documentos"/>
@@ -10,18 +10,24 @@
 	<subDataset name="db_documentos" uuid="865a1baf-f67a-48d4-ba28-169bbb883ba5">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="db_documentos"/>
-		<parameter name="COD_PARECER_LIST" class="java.lang.Long"/>
+		<parameter name="COD_PARECER_LIST" class="java.lang.Long">
+			<parameterDescription><![CDATA[]]></parameterDescription>
+		</parameter>
+		<parameter name="COD_STATUS" class="java.lang.String"/>
 		<queryString>
-			<![CDATA[SELECT db_documentos.tbl_atos.descricao
+			<![CDATA[SELECT db_documentos.tbl_atos.descricao,
+	db_documentos.tbl_checklist.status
 FROM db_documentos.tbl_checklist
 	INNER JOIN db_documentos.tbl_parecer ON 
 	 db_documentos.tbl_checklist.fk_parecer = db_documentos.tbl_parecer.cod_parecer 
 	INNER JOIN db_documentos.tbl_atos ON 
 	 db_documentos.tbl_checklist.fk_atos = db_documentos.tbl_atos.cod_atos 
 WHERE 
-	 db_documentos.tbl_checklist.fk_parecer = $P{COD_PARECER_LIST}]]>
+	 db_documentos.tbl_checklist.fk_parecer = $P{COD_PARECER_LIST} AND
+	 db_documentos.tbl_checklist.status =  'Aplicar']]>
 		</queryString>
 		<field name="descricao" class="java.lang.String"/>
+		<field name="status" class="java.lang.String"/>
 		<variable name="ITENS" class="java.math.BigDecimal" calculation="Count">
 			<variableExpression><![CDATA[$V{ITENS}.add(new BigDecimal(1))]]></variableExpression>
 			<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
@@ -46,6 +52,33 @@ WHERE
 		<field name="valor" class="java.math.BigDecimal"/>
 		<field name="observacao" class="java.lang.String"/>
 		<field name="descricao" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="naoListados" uuid="b63aefa6-5187-47bb-b9d0-33cbcbf2ddb7">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="db_documentos"/>
+		<parameter name="COD_PARECER_LIST" class="java.lang.Long">
+			<parameterDescription><![CDATA[]]></parameterDescription>
+		</parameter>
+		<parameter name="COD_STATUS" class="java.lang.String">
+			<parameterDescription><![CDATA[]]></parameterDescription>
+		</parameter>
+		<queryString>
+			<![CDATA[SELECT db_documentos.tbl_atos.descricao,
+	db_documentos.tbl_checklist.status
+FROM db_documentos.tbl_checklist
+	INNER JOIN db_documentos.tbl_parecer ON 
+	 db_documentos.tbl_checklist.fk_parecer = db_documentos.tbl_parecer.cod_parecer 
+	INNER JOIN db_documentos.tbl_atos ON 
+	 db_documentos.tbl_checklist.fk_atos = db_documentos.tbl_atos.cod_atos 
+WHERE 
+	 db_documentos.tbl_checklist.fk_parecer = $P{COD_PARECER_LIST} 
+	 AND db_documentos.tbl_checklist.status = 'Omitir']]>
+		</queryString>
+		<field name="descricao" class="java.lang.String"/>
+		<variable name="ITENS_I" class="java.math.BigDecimal" calculation="Count">
+			<variableExpression><![CDATA[$V{ITENS_I}.add(new BigDecimal(1))]]></variableExpression>
+			<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+		</variable>
 	</subDataset>
 	<parameter name="DESFECHO" class="java.lang.String"/>
 	<parameter name="NUM_PARECER" class="java.lang.String"/>
@@ -389,37 +422,38 @@ WHERE
 	</group>
 	<group name="conclusao" keepTogether="true">
 		<groupHeader>
-			<band height="136">
+			<band height="167">
 				<staticText>
 					<reportElement style="Detail" positionType="Float" isPrintRepeatedValues="false" x="18" y="-13" width="100" height="30" isPrintInFirstWholeBand="true" uuid="42ba5800-3f4e-425c-aeb6-2dc4e67ddb88"/>
 					<textElement>
 						<font size="12" isBold="true"/>
 					</textElement>
-					<text><![CDATA[Da Conclusão:]]></text>
+					<text><![CDATA[Da Análise:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="Detail" positionType="Float" isPrintRepeatedValues="false" x="103" y="-12" width="428" height="30" isPrintInFirstWholeBand="true" uuid="660b95fa-c699-443d-a764-b8ab246f49c7"/>
+					<reportElement style="Detail" positionType="Float" isPrintRepeatedValues="false" x="86" y="-13" width="428" height="30" isPrintInFirstWholeBand="true" uuid="660b95fa-c699-443d-a764-b8ab246f49c7"/>
 					<textElement>
 						<font size="12"/>
 					</textElement>
-					<text><![CDATA[Diante da análise dos documentos acostados ao processo, observou-se:]]></text>
+					<text><![CDATA[Diante dos documentos acostados ao processo, observou-se:]]></text>
 				</staticText>
 				<componentElement>
-					<reportElement style="Detail" positionType="Float" isPrintRepeatedValues="false" x="18" y="4" width="530" height="17" isPrintInFirstWholeBand="true" uuid="6c68bfad-5ba8-496a-a431-f15ad4fcbdc6">
+					<reportElement style="Detail" positionType="Float" isPrintRepeatedValues="false" x="18" y="4" width="530" height="17" isRemoveLineWhenBlank="true" uuid="6c68bfad-5ba8-496a-a431-f15ad4fcbdc6">
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.CONTENTS.width" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.CONTENTS.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
 					</reportElement>
-					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal" ignoreWidth="false">
-						<datasetRun subDataset="db_documentos" uuid="8ca5dd4b-3618-4e4c-9815-6c7074f94681">
+					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
+						<datasetRun subDataset="db_documentos" uuid="8f2b79ab-692a-469a-9ac3-bd521d4da5f0">
 							<datasetParameter name="COD_PARECER_LIST">
 								<datasetParameterExpression><![CDATA[$P{COD_PARECER}]]></datasetParameterExpression>
 							</datasetParameter>
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 						</datasetRun>
-						<jr:listContents height="17" width="265">
+						<jr:listContents height="30" width="260">
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 								<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="1" width="260" height="16" isRemoveLineWhenBlank="true" uuid="0f31809d-e3be-4490-9e96-e61449f12e01">
 									<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -435,7 +469,7 @@ WHERE
 					</jr:list>
 				</componentElement>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="Detail" positionType="Float" isPrintRepeatedValues="false" x="18" y="23" width="520" height="17" isRemoveLineWhenBlank="true" forecolor="#FF0000" uuid="449e327b-85e5-47d5-a605-9ec5091db06f">
+					<reportElement style="Detail" positionType="Float" isPrintRepeatedValues="false" x="18" y="58" width="520" height="17" isRemoveLineWhenBlank="true" forecolor="#FF0000" uuid="449e327b-85e5-47d5-a605-9ec5091db06f">
 						<printWhenExpression><![CDATA[$F{conclusao}.isEmpty()== false]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Justified">
@@ -445,7 +479,7 @@ WHERE
 					<textFieldExpression><![CDATA[$F{conclusao}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-					<reportElement style="Detail" positionType="FixRelativeToBottom" isPrintRepeatedValues="false" x="18" y="43" width="520" height="65" isRemoveLineWhenBlank="true" uuid="688a6d08-ef43-493a-aea4-a8d163e3e197">
+					<reportElement style="Detail" positionType="FixRelativeToBottom" isPrintRepeatedValues="false" x="18" y="77" width="520" height="65" isRemoveLineWhenBlank="true" uuid="688a6d08-ef43-493a-aea4-a8d163e3e197">
 						<printWhenExpression><![CDATA[$P{DESFECHO}.equals("sem status")==false]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="html">
@@ -455,12 +489,54 @@ WHERE
 					<textFieldExpression><![CDATA["Dessa forma, o processo está em  <b>"+$F{status}.toUpperCase()+" </b> "+ $P{DESFECHO}+ " condições mínimas para subsidiar o gestor em sua decisão de pagamento e não exime o órgão de ser objeto de auditoria/inspeções para o acompanhamento, bem como de quaisquer outras apreciações quanto à observância do fiel cumprimento à legislação pertinente."]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="Detail" positionType="FixRelativeToBottom" isPrintRepeatedValues="false" x="59" y="115" width="100" height="18" isRemoveLineWhenBlank="true" uuid="87eadb87-8f65-40ea-ad27-606162e55e16"/>
+					<reportElement style="Detail" positionType="FixRelativeToBottom" isPrintRepeatedValues="false" x="59" y="149" width="100" height="18" isRemoveLineWhenBlank="true" uuid="87eadb87-8f65-40ea-ad27-606162e55e16"/>
 					<textElement>
 						<font fontName="SansSerif" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA["É o parecer."]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement positionType="Float" isPrintRepeatedValues="false" x="19" y="22" width="100" height="19" isRemoveLineWhenBlank="true" uuid="6af77e89-edeb-474b-a723-fe0b595bd28f">
+						<printWhenExpression><![CDATA[$F{status}.equals( "conformidade" )==false]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[E a ausência de:]]></text>
+				</staticText>
+				<componentElement>
+					<reportElement positionType="Float" isPrintRepeatedValues="false" x="18" y="38" width="530" height="17" isRemoveLineWhenBlank="true" uuid="7c4beca9-1024-4252-a19b-785b6d7b6250">
+						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.CONTENTS.width" value="pixel"/>
+						<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+						<property name="com.jaspersoft.studio.unit.CONTENTS.height" value="pixel"/>
+					</reportElement>
+					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
+						<datasetRun subDataset="naoListados" uuid="8b03bf17-8828-4ec8-80a4-1b03186b8174">
+							<datasetParameter name="COD_PARECER_LIST">
+								<datasetParameterExpression><![CDATA[$P{COD_PARECER}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:listContents height="30" width="260">
+							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+								<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="1" width="260" height="16" isRemoveLineWhenBlank="true" uuid="c722461a-b5b6-4464-aac8-68f48f9830ee">
+									<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+									<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+									<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+									<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+								</reportElement>
+								<textElement>
+									<font size="11"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{ITENS_I}+"."+ $F{descricao}+";"]]></textFieldExpression>
+							</textField>
+						</jr:listContents>
+					</jr:list>
+				</componentElement>
 			</band>
 		</groupHeader>
 	</group>

@@ -65,7 +65,7 @@ public class ChecklistDAO {
 			Query consulta = sessao.getNamedQuery("Checklist.buscarPorParecerAto");
 			consulta.setLong("codigo", codigo);
 			consulta.setLong("atosCodigo", ato);
-			
+						
 			if (consulta.list().size() > 0){
 				checklist = (Checklist) consulta.list().get(0);
 			}
@@ -84,6 +84,23 @@ public class ChecklistDAO {
 		try{
 			Query consulta = sessao.getNamedQuery("Checklist.buscarPorParecer");
 			consulta.setLong("codigo", codigo);
+			listaChecklist = consulta.list();
+		}catch(RuntimeException ex){
+			throw ex;
+		}finally{
+			sessao.close();
+		}
+		return listaChecklist;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Checklist> buscarPorParecer(Long codigo, String status){
+		Session sessao = HibernateUtil.getSessionFactory().openSession();
+		List<Checklist> listaChecklist = null;
+		try{
+			Query consulta = sessao.getNamedQuery("Checklist.buscarPorParecerStatus");
+			consulta.setLong("codigo", codigo);
+			consulta.setString("status", status);
 			listaChecklist = consulta.list();
 		}catch(RuntimeException ex){
 			throw ex;

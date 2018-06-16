@@ -57,6 +57,9 @@
 					<f:selectItem itemValue="Ordem Judicial" itemLabel="Ordem Judicial" />
 					<f:selectItem itemValue="Terceirizada" itemLabel="Terceirizada" />
 					<f:selectItem itemValue="Patrocínio" itemLabel="Patrocínio" />
+					<f:selectItem itemValue="Consultoria" itemLabel="Consultoria" />
+					<f:selectItem itemValue="Ajuda de Custo" itemLabel="Ajuda de Custo" />
+					<f:selectItem itemValue="Aluguel Social" itemLabel="Aluguel Social" />
 					<f:selectItem itemValue="Outros" itemLabel="Outros" />
 					<f:validateBean />
 				</p:selectOneMenu>
@@ -88,7 +91,11 @@
 			<p:commandButton value="Atos" icon="ui-icon-circle-plus"
 				style="margin-top: 1%" oncomplete="PF ('DlgAtos').show();" />
 
-
+			<p:toolbar>
+				<f:facet name="left">
+					<h:outputText value="Atos Presentes" />
+				</f:facet>
+			</p:toolbar>
 			<p:dataTable id="tblAtoChecklist"
 				emptyMessage="Nenhum registro encontrado."
 				value="#{parecerBean.listaChecklists}" var="checklist" rows="5"
@@ -102,20 +109,65 @@
 					<h:outputText value="#{checklist.atos.categoria}" />
 				</p:column>
 
+				<p:column headerText="Status">
+					<h:outputText value="#{checklist.atos.status}" />
+				</p:column>
+
 				<p:column headerText="Opções" style="width: 9%;">
 					<p:commandButton value="Remover" icon="ui-icon-circle-close"
 						actionListener="#{parecerBean.removerAtos(checklist)}"
-						update=":formCadParecer:tblAtoChecklist" process="@this">
+						update=":formCadParecer:tblAtoChecklist
+								:formCadParecer:tblAtoChecklistInativo"
+						process="@this">
 					</p:commandButton>
 				</p:column>
 
 			</p:dataTable>
-			<p:outputLabel value="Observação:" />
+			<p:separator />
+			<p:toolbar>
+				<f:facet name="left">
+					<h:outputText value="Atos Ausentes" />
+				</f:facet>
+			</p:toolbar>
+			<p:dataTable id="tblAtoChecklistInativo"
+				emptyMessage="Nenhum registro encontrado."
+				value="#{parecerBean.listaAtosNaoSelecionados}" var="checklist"
+				rows="5" paginator="true">
+
+				<p:column headerText="Descriacao">
+					<h:outputText value="#{checklist.atos.descricao}" />
+				</p:column>
+
+				<p:column headerText="Categoria">
+					<h:outputText value="#{checklist.atos.categoria}" />
+				</p:column>
+
+				<p:column headerText="Status">
+					<h:outputText value="#{checklist.atos.status}" />
+				</p:column>
+
+				<p:column headerText="Opções" style="width: 9%;">
+					<p:commandButton value="Remover" icon="ui-icon-circle-close"
+						actionListener="#{parecerBean.removerAtosInativos(checklist)}"
+						update=":formCadParecer:tblAtoChecklist 
+								:formCadParecer:tblAtoChecklistInativo"
+						process="@this">
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+
+			<!-- <p:outputLabel value="Observação:" />
 			<p:inputTextarea id="conclusao" class="textarea" maxlength="8192"
 				value="#{parecerBean.parecerCadastro.conclusao}"
 				readonly="#{parecerBean.acao == 'excluir'}">
 				<f:validateBean />
-			</p:inputTextarea>
+			</p:inputTextarea> -->
+
+			<p:editor id="conclusao"
+				value="#{parecerBean.parecerCadastro.conclusao}" height="300"
+				style="margin-bottom:10px">
+			</p:editor>
 
 			<p:outputLabel value="Status: " />
 			<p:selectOneMenu id="listaStatus"
@@ -149,6 +201,7 @@
 						actionListener="#{parecerBean.salvar}"
 						update=":msgGlobal 
 						:formCadParecer:tblAtoChecklist 
+						:formCadParecer:tblAtoChecklistInativo
 						:formCadParecer:listaProcesso 
 						:formCadParecer:listaStatus
 						:formCadParecer:listaTipo
@@ -180,23 +233,19 @@
 		<!-- Dialogo de Atos -->
 		<p:dialog closable="true" draggable="true" modal="true"
 			resizable="false" header="Pesquisa Atos" widgetVar="DlgAtos"
-			appendTo="@(body)" height="400px" width="800px">
+			appendTo="@(body)" height="450px" width="800px">
 			<h:form id="formAtos">
 				<p:dataTable id="tbl_atos"
 					emptyMessage="Nenhum registro encontrado."
 					value="#{parecerBean.listaAtos}"
 					filteredValue="#{parecerBean.listaAtosFiltrados}"
 					selection="#{parecerBean.listaAtosSelecionados}" var="ato" rows="7"
-					rowKey="#{ato.id}" paginator="true" widgetVar="tblAtos">
+					rowKey="#{ato.id}" paginator="true" widgetVar="tblAtos"
+					editable="true" editMode="cell" process="@this">
 
 
 					<p:column selectionMode="multiple"
 						style="width:16px; align:center;" />
-
-					<!--  <p:column headerText="Código" filterBy="#{ato.id}"
-						filterStyle="max-width: 90%; min-width: 90%" style="width: 9%;">
-						<h:outputText value="#{ato.id}" />
-					</p:column>-->
 
 					<p:column headerText="Descrição">
 						<h:outputText value="#{ato.descricao}" />
@@ -238,6 +287,11 @@
 									itemLabel="Ordem Judicial" />
 								<f:selectItem itemValue="Terceirizada" itemLabel="Terceirizada" />
 								<f:selectItem itemValue="Patrocínio" itemLabel="Patrocínio" />
+								<f:selectItem itemValue="Consultoria" itemLabel="Consultoria" />
+								<f:selectItem itemValue="Ajuda de Custo"
+									itemLabel="Ajuda de Custo" />
+								<f:selectItem itemValue="Aluguel Social"
+									itemLabel="Aluguel Social" />
 								<f:selectItem itemValue="Outros" itemLabel="Outros" />
 							</p:selectOneMenu>
 						</f:facet>
@@ -245,16 +299,37 @@
 						<h:outputText value="#{ato.categoria}" />
 					</p:column>
 
+					<!--Rever e Testar -->
+					<p:column headerText="Situação">
+						
+						<p:cellEditor id="celulaStatus">
+							<f:facet name="output">
+								<h:outputText value="#{ato.status}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:selectOneMenu value="#{ato.status}" style="width:100%">
+									<f:selectItems value="#{parecerBean.status}" />
+								</p:selectOneMenu>
+							</f:facet>
+						</p:cellEditor>
+					</p:column> 
+
+
 					<!-- botões -->
 					<f:facet name="footer">
 						<p:commandButton icon="ui-icon-circle-check" process="tbl_atos"
 							value="Adicionar"
 							actionListener="#{parecerBean.adicionarListAtos}"
-							update=":formCadParecer:tblAtoChecklist" />
-					</f:facet>
+							update=":formCadParecer:tblAtoChecklist
+									:formCadParecer:tblAtoChecklistInativo" />
+					</f:facet>	
+					
 				</p:dataTable>
+				<!-- Fim do diálogo dos atos -->
 			</h:form>
 		</p:dialog>
+		
+		
 
 		<!-- MENSAGEM PARA CONFIRMAÇÃO DE EXCLUSÃO -->
 		<p:confirmDialog id="confirmacaoDialogExcluir" appendTo="@(body)"

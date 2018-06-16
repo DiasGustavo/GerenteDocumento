@@ -34,6 +34,11 @@ public class Atos {
 	@Size(min = 3, max = 50, message= "O tipo parecer deve ter entre 3 e 15 caracteres")
 	@Column(name="categoria", length=50, nullable=false)
 	private String categoria;
+	
+	@NotEmpty(message = "o campo descrição é obrigatório")
+	@Size(min = 1, max = 200, message= "A descrição deve ter entre 1 e 200 caracteres")
+	@Column(name="status", length=200, nullable=false)
+	private String status;
 
 	public Long getId() {
 		return id;
@@ -57,6 +62,14 @@ public class Atos {
 
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
+	}	
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	@Override
